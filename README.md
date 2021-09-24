@@ -3,6 +3,9 @@
 Command line options:
 Giganuta.exe "FEN" "DEPTH"
 
+### Current Perf:
+ - Perft Start 7: 3195901860 3037ms 1052.19 MNodes/s
+ - Perft Kiwi 6: 8031647685 4915ms 1634 MNodes/s
 
 ### Performance history - 20.09.21 - 24.09.21:
  - Perft aggregate: 18999768562 14369ms 1322.21 MNodes/s
