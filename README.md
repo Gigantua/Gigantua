@@ -1,11 +1,11 @@
 # Gigantua Chess PerfT
 
 Command line options:
-Giganuta.exe "FEN" "DEPTH"
+Gigantua.exe "FEN" "DEPTH"
 
 ### Current Perf:
- - Perft Start 7: 3195901860 2736ms 1167.76 MNodes/s
- - Perft Kiwi 6: 8031647685 4410ms 1820.85 MNodes/s
+ - Perft Start 7: 3195901860 2687ms 1189.36 MNodes/s
+ - Perft Kiwi 6: 8031647685 4372ms 1836.87 MNodes/s
 
 ### Performance history - 20.09.21 - 30.09.21:
  - Perft aggregate: 18999768562 14369ms 1322.21 MNodes/s
