@@ -35,8 +35,8 @@ Gigantua.exe "FEN" "DEPTH"
  - Perft aggregate: 18999768562 11753ms 1616.48 MNodes/s
  - Perft aggregate: 18999768562 11620ms 1634.99 MNodes/s
  - Perft aggregate: 18999768562 11427ms 1662.68 MNodes/s
- - Perft aggregate: 18999768562 10774ms 1763.35 MNodes/s - (no more constant 4.5ghz core clock as this is the final version)
-
+ - Perft aggregate: 18999768562 10774ms 1763.35 MNodes/s
+ - Perft aggregate: 18999768562 9967ms 1906.19 MNodes/s -- Disabled constant 4.5ghz core clock as this is the final version
 
 ### SOURCECODE WILL BE OUT SOON!
 
