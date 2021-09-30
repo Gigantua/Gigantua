@@ -4,8 +4,8 @@ Command line options:
 Gigantua.exe "FEN" "DEPTH"
 
 ### Current Perf:
- - Perft Start 7: 3195901860 2687ms 1189.36 MNodes/s
- - Perft Kiwi 6: 8031647685 4372ms 1836.87 MNodes/s
+ - Perft Start 7: 3195901860 2169ms 1472.87 MNodes/s
+ - Perft Kiwi 6: 8031647685 3917ms 2050.07 MNodes/s
 
 ### Performance history - 20.09.21 - 30.09.21:
  - Perft aggregate: 18999768562 14369ms 1322.21 MNodes/s
@@ -27,6 +27,16 @@ Gigantua.exe "FEN" "DEPTH"
  - Perft aggregate: 18999768562 12389ms 1533.48 MNodes/s
  - Perft aggregate: 18999768562 12267ms 1548.76 MNodes/s
  - Perft aggregate: 18999768562 12243ms 1551.8 MNodes/s
+
+### Performance 31.09.2021 final polishing - Enable Inlining again
+ - Perft aggregate: 18999768562 11943ms 1590.85 MNodes/s
+ - Perft aggregate: 18999768562 11912ms 1594.98 MNodes/s
+ - Perft aggregate: 18999768562 11804ms 1609.57 MNodes/s
+ - Perft aggregate: 18999768562 11753ms 1616.48 MNodes/s
+ - Perft aggregate: 18999768562 11620ms 1634.99 MNodes/s
+ - Perft aggregate: 18999768562 11427ms 1662.68 MNodes/s
+ - Perft aggregate: 18999768562 10774ms 1763.35 MNodes/s - (no more constant 4.5ghz core clock as this is the final version)
+
 
 ### SOURCECODE WILL BE OUT SOON!
 
