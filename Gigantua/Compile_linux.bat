@@ -1,0 +1,2 @@
+wsl g++-11 Gigantua.cpp Movegen.hpp Movemap.hpp Movelist.hpp -std=c++2a -march=native -O3 -fomit-frame-pointer -foptimize-sibling-calls -o giga_gcc
+wsl clang-12 -march=native -std=c++20 -lstdc++ -O3 Gigantua.cpp -flto -o giga_clang
