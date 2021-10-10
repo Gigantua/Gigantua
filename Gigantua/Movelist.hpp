@@ -290,35 +290,18 @@ namespace Movelist {
         pawn = (pinned | unpinned); //You can go forward and you and your targetsquare is allowed
     }
 
-
-    //We can move to any square that averts a check + is enemy or empty. Pins are handled extra.
-    template<bool inCheck>
-    _Compiletime map ConstCheckmask(const map checkmask)
-    {
-        if constexpr (inCheck) return checkmask;
-        else return 0xffffffffffffffffull; //Helps the compiler to remove unnecessary &
-    }
-
-    //We can move to any square that averts a check + is enemy or empty. Pins are handled for each piecetype
-    template<bool white, bool inCheck>
-    _Compiletime map MoveableSquares(const Board& brd, const map checkmask)
-    {
-        if constexpr (inCheck) return EnemyOrEmpty<white>(brd) & checkmask;
-        else return EnemyOrEmpty<white>(brd);
-    }
-
     class VoidClass{};
-    template<class BoardStatus status, bool justcount, class Callback_Move, int depth, bool inCheck>
-    _ForceInline auto _enumerate(const Board& brd, map kingatk, const map kingban, const map CheckMask)
+    template<class BoardStatus status, bool justcount, class Callback_Move, int depth>
+    _ForceInline auto _enumerate(const Board& brd, map kingatk, const map kingban, const map checkmask)
     {
         constexpr bool white = status.WhiteMove;
+        const bool noCheck = (checkmask == 0xffffffffffffffffull);
         uint64_t movecnt = 0;
 
         //All outside variables need to be in local scope as the Callback will change everything on enumeration
         const map pinHV  = RookPin;
         const map pinD12 = BishopPin;
-        const map checkmask = ConstCheckmask<inCheck>(CheckMask);
-        const map movableSquare = MoveableSquares<white, inCheck>(brd, checkmask); 
+        const map movableSquare = EnemyOrEmpty<white>(brd) & checkmask;
         const map epTarget = EnPassantTarget;
 
         //Kingmoves
@@ -337,8 +320,8 @@ namespace Movelist {
 
             //Castling
             //Todo think about how to remove the template if a rook is taken that would have been able to castle
-            if constexpr (!inCheck && status.CanCastleLeft()) {
-                if (status.CanCastleLeft(kingban, brd.Occ, Rooks<white>(brd))) {
+            if constexpr (status.CanCastleLeft()) {
+                if (noCheck && status.CanCastleLeft(kingban, brd.Occ, Rooks<white>(brd))) {
                     if constexpr (justcount) { movecnt++; }
                     else {
                         Movestack::Atk_EKing[depth - 1] = Lookup::King(SquareOf(King<white>(brd) << 2));
@@ -346,8 +329,8 @@ namespace Movelist {
                     }
                 }
             }
-            if constexpr (!inCheck && status.CanCastleRight()) {
-                if (status.CanCastleRight(kingban, brd.Occ, Rooks<white>(brd))) {
+            if constexpr (status.CanCastleRight()) {
+                if (noCheck && status.CanCastleRight(kingban, brd.Occ, Rooks<white>(brd))) {
                     if constexpr (justcount) { movecnt++; }
                     else {
                         Movestack::Atk_EKing[depth - 1] = Lookup::King(SquareOf(King<white>(brd) >> 2));
@@ -564,12 +547,8 @@ namespace Movelist {
         map kingban = Movestack::Atk_King[depth - 1] = Movestack::Atk_EKing[depth];
         map kingatk = Refresh<status, depth>(brd, kingban, checkmask);
 
-        if (checkmask == 0xffffffffffffffffull)
-        {
-            _enumerate<status, false, Callback_Move, depth, false>(brd, kingatk, kingban, checkmask);
-        }
-        else if (checkmask != 0) {
-            _enumerate<status, false, Callback_Move, depth, true>(brd, kingatk, kingban, checkmask);
+        if (checkmask != 0) {
+            _enumerate<status, false, Callback_Move, depth>(brd, kingatk, kingban, checkmask);
         }
         else {
             Bitloop(kingatk)
@@ -587,10 +566,11 @@ namespace Movelist {
         map checkmask = Movestack::Check_Status[1];
         map kingban = Movestack::Atk_EKing[1];
         map kingatk = Refresh<status, 1>(brd, kingban, checkmask);
-
-        if (checkmask == 0xffffffffffffffffull) return _enumerate<status, true, VoidClass, 1, false>(brd, kingatk, kingban, checkmask); //no check
-        else if (checkmask != 0) return _enumerate<status, true, VoidClass, 1, true>(brd, kingatk, kingban, checkmask);  //one check
-        else return Bitcount(kingatk); //double check
+         
+        if (checkmask != 0)
+            return _enumerate<status, true, VoidClass, 1>(brd, kingatk, kingban, checkmask);  //one check
+        else
+            return Bitcount(kingatk); //double check
     }
 
 
