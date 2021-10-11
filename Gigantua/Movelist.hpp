@@ -291,9 +291,10 @@ namespace Movelist {
     }
 
     class VoidClass{};
-    template<class BoardStatus status, bool justcount, class Callback_Move, int depth>
+    template<class BoardStatus status, class Callback_Move, int depth>
     _ForceInline auto _enumerate(const Board& brd, map kingatk, const map kingban, const map checkmask)
     {
+        constexpr bool justcount = std::is_same_v<Callback_Move, VoidClass>;
         constexpr bool white = status.WhiteMove;
         const bool noCheck = (checkmask == 0xffffffffffffffffull);
         uint64_t movecnt = 0;
@@ -548,7 +549,7 @@ namespace Movelist {
         map kingatk = Refresh<status, depth>(brd, kingban, checkmask);
 
         if (checkmask != 0) {
-            _enumerate<status, false, Callback_Move, depth>(brd, kingatk, kingban, checkmask);
+            _enumerate<status, Callback_Move, depth>(brd, kingatk, kingban, checkmask);
         }
         else {
             Bitloop(kingatk)
@@ -568,7 +569,7 @@ namespace Movelist {
         map kingatk = Refresh<status, 1>(brd, kingban, checkmask);
          
         if (checkmask != 0)
-            return _enumerate<status, true, VoidClass, 1>(brd, kingatk, kingban, checkmask);  //one check
+            return _enumerate<status, VoidClass, 1>(brd, kingatk, kingban, checkmask);  //one check
         else
             return Bitcount(kingatk); //double check
     }
