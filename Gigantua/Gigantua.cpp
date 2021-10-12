@@ -31,17 +31,10 @@ public:
 	template<class BoardStatus status, int depth>
 	static _ForceInline void PerfT(Board& brd)
 	{
-		Movelist::EnumerateMoves<status, MoveReciever, depth>(brd);
-	}
-
-	//This method will see every position //Normal Inline - not forced - heavy recursion
-	template<class BoardStatus status, int depth>
-	static _ForceInline void RegisterMove(Board& brd)
-	{
-		if constexpr (depth == 2) {
+		if constexpr (depth == 1)
 			PerfT1<status>(brd);
-		}
-		else PerfT<status, depth - 1>(brd);
+		else
+			Movelist::EnumerateMoves<status, MoveReciever, depth>(brd);
 	}
 
 
@@ -57,7 +50,7 @@ public:
 		IFPRN std::cout << "Kingmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
 
-		RegisterMove<status.KingMove(), depth>(next);
+		PerfT<status.KingMove(), depth - 1>(next);
 	}
 
 	template<class BoardStatus status, int depth>
@@ -66,7 +59,7 @@ public:
 		Board next = Board::MoveCastle<status.WhiteMove>(brd, kingswitch, rookswitch);
 		IFPRN std::cout << "KingCastle:\n" << _map(kingswitch, rookswitch, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, false);
-		RegisterMove<status.KingMove(), depth>(next);
+		PerfT<status.KingMove(), depth - 1>(next);
 	}
 
 	template<class BoardStatus status, int depth>
@@ -93,7 +86,7 @@ public:
 		IFPRN std::cout << "Pawnmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
 		PawnCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 	}
 
@@ -104,7 +97,7 @@ public:
 		IFPRN std::cout << "Pawntake:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
 		PawnCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 	}
 
@@ -115,7 +108,7 @@ public:
 		IFPRN std::cout << "PawnEnpassantTake:\n" << _map(from | enemy, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, true);
 		PawnCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 	}
 
@@ -128,7 +121,7 @@ public:
 
 		Movelist::EnPassantTarget = to;
 		PawnCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.PawnPush(), depth>(next);
+		PerfT<status.PawnPush(), depth - 1>(next);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 	}
 
@@ -138,17 +131,17 @@ public:
 		Board next1 = Board::MovePromote<BoardPiece::Queen, status.WhiteMove>(brd, from, to);
 		IFPRN std::cout << "Pawnpromote:\n" << _map(from, to, brd, next1) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next1, to & Enemy<status.WhiteMove>(brd));
-		RegisterMove<status.SilentMove(), depth>(next1);
+		PerfT<status.SilentMove(), depth - 1>(next1);
 
 		Board next2 = Board::MovePromote<BoardPiece::Knight, status.WhiteMove>(brd, from, to);
 		KnightCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.SilentMove(), depth>(next2);
+		PerfT<status.SilentMove(), depth - 1>(next2);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 
 		Board next3 = Board::MovePromote<BoardPiece::Bishop, status.WhiteMove>(brd, from, to);
-		RegisterMove<status.SilentMove(), depth>(next3);
+		PerfT<status.SilentMove(), depth - 1>(next3);
 		Board next4 = Board::MovePromote<BoardPiece::Rook, status.WhiteMove>(brd, from, to);
-		RegisterMove<status.SilentMove(), depth>(next4);
+		PerfT<status.SilentMove(), depth - 1>(next4);
 	}
 
 	template<class BoardStatus status, int depth>
@@ -158,7 +151,7 @@ public:
 		IFPRN std::cout << "Knightmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
 		KnightCheck<status, depth>(EnemyKing<status.WhiteMove>(brd), to);
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 		Movestack::Check_Status[depth - 1] = 0xffffffffffffffffull;
 	}
 
@@ -168,7 +161,7 @@ public:
 		Board next = Board::Move <BoardPiece::Bishop, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Bishopmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 	}
 
 	template<class BoardStatus status, int depth>
@@ -178,11 +171,11 @@ public:
 		IFPRN std::cout << "Rookmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
 		if constexpr (status.CanCastle()) {
-			if (status.IsLeftRook(from)) RegisterMove<status.RookMove_Left(), depth>(next);
-			else if (status.IsRightRook(from)) RegisterMove<status.RookMove_Right(), depth>(next);
-			else RegisterMove<status.SilentMove(), depth>(next);
+			if (status.IsLeftRook(from)) PerfT<status.RookMove_Left(), depth - 1>(next);
+			else if (status.IsRightRook(from)) PerfT<status.RookMove_Right(), depth - 1>(next);
+			else PerfT<status.SilentMove(), depth - 1>(next);
 		}
-		else RegisterMove<status.SilentMove(), depth>(next);
+		else PerfT<status.SilentMove(), depth - 1>(next);
 	}
 
 	template<class BoardStatus status, int depth>
@@ -191,7 +184,7 @@ public:
 		Board next = Board::Move<BoardPiece::Queen, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Queenmove:\n" << _map(from, to, brd, next) << "\n";
 		//IFDBG Board::AssertBoardMove<status.WhiteMove>(brd, next, to & Enemy<status.WhiteMove>(brd));
-		RegisterMove<status.SilentMove(), depth>(next);
+		PerfT<status.SilentMove(), depth - 1>(next);
 	}
 };
 
