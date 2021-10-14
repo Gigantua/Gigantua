@@ -44,7 +44,7 @@ public:
 #define IFPRN if constexpr (ENABLEPRINT) 
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Kingmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Kingmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move<BoardPiece::King, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Kingmove:\n" << _map(from, to, brd, next) << "\n";
@@ -54,7 +54,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void KingCastle(const Board& brd, uint64_t kingswitch, uint64_t rookswitch)
+	static void KingCastle(const Board& brd, uint64_t kingswitch, uint64_t rookswitch)
 	{
 		Board next = Board::MoveCastle<status.WhiteMove>(brd, kingswitch, rookswitch);
 		IFPRN std::cout << "KingCastle:\n" << _map(kingswitch, rookswitch, brd, next) << "\n";
@@ -63,7 +63,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void PawnCheck(map eking, uint64_t to) {
+	static void PawnCheck(map eking, uint64_t to) {
 		constexpr bool white = status.WhiteMove;
 		map pl = Pawn_AttackLeft<white>(to & Pawns_NotLeft());
 		map pr = Pawn_AttackRight<white>(to & Pawns_NotRight());
@@ -72,7 +72,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void KnightCheck(map eking, uint64_t to) {
+	static void KnightCheck(map eking, uint64_t to) {
 		constexpr bool white = status.WhiteMove;
 
 		if (Lookup::Knight(SquareOf(eking)) & to) Movestack::Check_Status[depth - 1] = to;
@@ -80,7 +80,7 @@ public:
 	
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Pawnmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Pawnmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move<BoardPiece::Pawn, status.WhiteMove, false>(brd, from, to);
 		IFPRN std::cout << "Pawnmove:\n" << _map(from, to, brd, next) << "\n";
@@ -91,7 +91,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Pawnatk(const Board& brd, uint64_t from, uint64_t to)
+	static void Pawnatk(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move<BoardPiece::Pawn, status.WhiteMove, true>(brd, from, to);
 		IFPRN std::cout << "Pawntake:\n" << _map(from, to, brd, next) << "\n";
@@ -102,7 +102,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void PawnEnpassantTake(const Board& brd, uint64_t from, uint64_t enemy, uint64_t to)
+	static void PawnEnpassantTake(const Board& brd, uint64_t from, uint64_t enemy, uint64_t to)
 	{
 		Board next = Board::MoveEP<status.WhiteMove>(brd, from, enemy, to);
 		IFPRN std::cout << "PawnEnpassantTake:\n" << _map(from | enemy, to, brd, next) << "\n";
@@ -113,7 +113,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Pawnpush(const Board& brd, uint64_t from, uint64_t to)
+	static void Pawnpush(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move <BoardPiece::Pawn, status.WhiteMove, false>(brd, from, to);
 		IFPRN std::cout << "Pawnpush:\n" << _map(from, to, brd, next) << "\n";
@@ -126,7 +126,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Pawnpromote(const Board& brd, uint64_t from, uint64_t to)
+	static void Pawnpromote(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next1 = Board::MovePromote<BoardPiece::Queen, status.WhiteMove>(brd, from, to);
 		IFPRN std::cout << "Pawnpromote:\n" << _map(from, to, brd, next1) << "\n";
@@ -145,7 +145,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Knightmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Knightmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move <BoardPiece::Knight, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Knightmove:\n" << _map(from, to, brd, next) << "\n";
@@ -156,7 +156,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Bishopmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Bishopmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move <BoardPiece::Bishop, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Bishopmove:\n" << _map(from, to, brd, next) << "\n";
@@ -165,7 +165,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Rookmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Rookmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move<BoardPiece::Rook, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Rookmove:\n" << _map(from, to, brd, next) << "\n";
@@ -179,7 +179,7 @@ public:
 	}
 
 	template<class BoardStatus status, int depth>
-	static _Inline void Queenmove(const Board& brd, uint64_t from, uint64_t to)
+	static void Queenmove(const Board& brd, uint64_t from, uint64_t to)
 	{
 		Board next = Board::Move<BoardPiece::Queen, status.WhiteMove>(brd, from, to, to & Enemy<status.WhiteMove>(brd));
 		IFPRN std::cout << "Queenmove:\n" << _map(from, to, brd, next) << "\n";
