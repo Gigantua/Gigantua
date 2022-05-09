@@ -346,7 +346,7 @@ struct FEN {
         }
 
         //En Passant
-        char EorMinus = FEN[i++];
+        char EorMinus = FEN[i];
         if (EorMinus != '-') {
             if (wb == 'w') {
                 //Todo where to store Enpassant
